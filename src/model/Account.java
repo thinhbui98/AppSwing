@@ -11,7 +11,15 @@ package model;
  */
 public class Account {
     private String username, password, fullname, phone, email, address;
-    int id, class_id;
+    int id, class_id, type;
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 
     public String getUsername() {
         return username;

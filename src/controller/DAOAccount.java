@@ -29,6 +29,7 @@ public class DAOAccount extends DAO{
                 a.setEmail(rs.getString("email"));
                 a.setPhone(rs.getString("phone"));
                 a.setAddress(rs.getString("address"));
+                a.setType(rs.getInt("type"));
                 a.setClass_id(rs.getInt("class_id"));
                 return true;
             }
