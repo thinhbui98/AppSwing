@@ -22,9 +22,11 @@ public class Request extends javax.swing.JFrame {
     DefaultTableModel model;
     private ArrayList<model.Request> list;
     private ArrayList<model.RequestDetail> listrd;
+    model.Account account;
     public Request() {
         initComponents();
-        list = new DAORequest().getListRequestSearched("SELECT requests.* ,users.username FROM requests LEFT JOIN users ON users.id = requests.user_id");
+        System.out.println(account);
+        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username FROM requests LEFT JOIN users ON users.id = requests.user_id");
         model = (DefaultTableModel) tblRequest.getModel();
         showTable();
     }
@@ -35,9 +37,26 @@ public class Request extends javax.swing.JFrame {
         tblRequest.getColumnModel().getColumn(2).setPreferredWidth(70);    
         tblRequest.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         
-        list.forEach((s) -> {                                                    
+        list.forEach((s) -> {
+            String status = "";
+            switch(s.getStatus()) {
+                case 1:
+                    status = "Đồng Ý";
+                    break;
+                case 2:
+                    status = "Từ Chối";
+                    break;
+                case 3:
+                    status = "Đang Xử Lý";
+                    break;
+                case 4:
+                    status = "Đang Chờ";
+                    break;
+                default:
+                    status = "Đã Trả Sách";
+            }
             model.addRow(new Object[] {
-                s.getId(), s.getUsername(), s.getStatus()
+                s.getId(), s.getUsername(), status
             });
         });
     }
@@ -168,12 +187,7 @@ public class Request extends javax.swing.JFrame {
 
         jLabel3.setText("Các sách yêu cầu:");
 
-        txtList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        txtList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        txtList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         jScrollPane2.setViewportView(txtList);
 
         jPanel2.setBackground(new java.awt.Color(0, 255, 0));
@@ -269,10 +283,10 @@ public class Request extends javax.swing.JFrame {
                                 .addComponent(txtId, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
                                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
                                 .addComponent(txtUsername, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
-                                .addComponent(txtStatus)))
-                        .addGap(24, 24, 24))
+                                .addComponent(txtStatus))))
                     .addComponent(jLabel7)
-                    .addComponent(jLabel6)))
+                    .addComponent(jLabel6))
+                .addGap(24, 24, 24))
             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
@@ -349,18 +363,40 @@ public class Request extends javax.swing.JFrame {
     private void tblRequestMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblRequestMouseClicked
         // TODO add your handling code here:
         int r = tblRequest.getSelectedRow();
+        
         if(r != -1) {
             model.Request rq = list.get(r);
             txtId.setText(String.valueOf(rq.getId()));
             txtUsername.setText(rq.getUsername());
-            txtStatus.setText(String.valueOf(rq.getStatus()));
+            String status = "";
+            switch(rq.getStatus()) {
+                case 1:
+                    status = "Đồng Ý";
+                    break;
+                case 2:
+                    status = "Từ Chối";
+                    break;
+                case 3:
+                    status = "Đang Xử Lý";
+                    break;
+                case 4:
+                    status = "Đang Chờ";
+                    break;
+                default:
+                    status = "Đã Trả Sách";
+            }
+            txtStatus.setText(status);
+            
             listrd = new DAORequest().getListRequestDetailSearched("SELECT request_details.* FROM request_details " +
                     "INNER JOIN books ON request_details.book_id = books.id " +
                     "INNER JOIN requests ON requests.id = request_details.request_id " +
                     "INNER JOIN users ON requests.user_id = users.id " +
                     "WHERE request_details.request_id = " + rq.getId() +
                     " ORDER BY request_details.id DESC");
-//            txtList.setListData(listrd.toArray());
+            
+            System.out.println(listrd);
+//            txtList.setModel(listrd);
+            
         }
     }//GEN-LAST:event_tblRequestMouseClicked
 

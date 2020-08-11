@@ -176,7 +176,13 @@ public class Register extends javax.swing.JFrame {
         a.setEmail(txtEmail.getText());
         
         if(new DAOAccount().Register(a)) {
-            JOptionPane.showMessageDialog(null, "ĐĂNG KÝ THÀNH CÔNG");
+//            JOptionPane.showMessageDialog(null, "ĐĂNG KÝ THÀNH CÔNG");
+            dispose();
+            if (a.getType() != 1) {
+                new MainStudent(a.getId()).setVisible(true);
+            } else {
+                new Main(a.getId()).setVisible(true);
+            }
         }
         else {
             JOptionPane.showMessageDialog(null, "KHÔNG THỂ ĐĂNG KÝ");

@@ -20,9 +20,17 @@ public class Account extends javax.swing.JFrame {
     /**
      * Creates new form Account
      */
+    
+    private ArrayList<model.Account> dataUser;
     public Account() {
         initComponents();
-        model.Account a = new model.Account();
+        
+    }
+    
+    public Account(int userId) {
+        initComponents();
+        dataUser = new DAOAccount().getAccount("SELECT * FROM users WHERE id = " + userId);
+        model.Account a = dataUser.get(0);
         txtId.setText(String.valueOf(a.getId()));
         txtUsername.setText(a.getUsername());
         txtPassword.setText(a.getPassword());
@@ -81,6 +89,8 @@ public class Account extends javax.swing.JFrame {
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel3.setText("Username:");
+
+        txtId.setEditable(false);
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel4.setText("Password:");

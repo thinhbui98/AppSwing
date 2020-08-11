@@ -24,7 +24,7 @@ public class Book extends javax.swing.JFrame {
     private ArrayList<model.Book> list;
     public Book() {
         initComponents();
-        list = new DAOBook().getListBookSearched("SELECT * FROM books WHERE deleted = 1");
+        list = new DAOBook().getListBookSearched("SELECT books.*,categories.categoryname FROM books INNER JOIN categories ON categories.id = books.category_id WHERE books.deleted = 1 ");
         model = (DefaultTableModel) tblBook.getModel();
         showTable();
     }
@@ -38,13 +38,13 @@ public class Book extends javax.swing.JFrame {
         
         list.forEach((s) -> {                                                    
             model.addRow(new Object[] {
-                s.getId(), s.getBookname(), s.getCategory_id(), s.getQuantity()
+                s.getId(), s.getBookname(), s.getCategoryname(), s.getQuantity()
             });
         });
     }
     
     private void loadData() {
-        list = new DAOBook().getListBookSearched("SELECT * FROM books WHERE deleted = 1");
+        list = new DAOBook().getListBookSearched("SELECT books.*,categories.categoryname FROM books INNER JOIN categories ON categories.id = books.category_id WHERE books.deleted = 1");
                                                                
         for (int i = model.getRowCount()-1; i >= 0; i--) {
             model.removeRow(i);                                
@@ -114,6 +114,18 @@ public class Book extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "KHÔNG THỂ XÓA");
         }
     }
+    
+    private void searchBook(){
+        
+        list = new DAOBook().getListBookSearched("SELECT books.*,categories.categoryname FROM books INNER JOIN categories ON categories.id = books.category_id WHERE books.deleted = 1 AND books.bookname LIKE '%" + txtSearch.getText() + "%'");
+                                                               
+        for (int i = model.getRowCount()-1; i >= 0; i--) {
+            model.removeRow(i);                                
+        }                                                      
+
+        tblBook.repaint();
+        showTable();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -149,7 +161,6 @@ public class Book extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         btnSearch = new javax.swing.JButton();
         txtSearch = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -359,10 +370,13 @@ public class Book extends javax.swing.JFrame {
         );
 
         btnSearch.setText("Tìm kiếm");
+        btnSearch.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnSearchMouseClicked(evt);
+            }
+        });
 
         txtSearch.setText("Tìm kiếm...");
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -373,18 +387,13 @@ public class Book extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 700, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 438, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(248, 248, 248)))
-                        .addGap(21, 21, 21)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(320, 320, 320)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 565, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(35, 35, 35))
@@ -400,7 +409,6 @@ public class Book extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -419,7 +427,8 @@ public class Book extends javax.swing.JFrame {
             model.Book bk = list.get(r);
             txtId.setText(String.valueOf(bk.getId()));
             txtBookname.setText(bk.getBookname());
-            txtCategory.setText(String.valueOf(bk.getCategory_id()));
+            txtCategory.setText(bk.getCategoryname());
+//            txtCategory.setText(String.valueOf(bk.getCategory_id()));
             txtDescription.setText(bk.getDescription());
             txtQuantity.setText(String.valueOf(bk.getQuantity()));
         }
@@ -439,6 +448,11 @@ public class Book extends javax.swing.JFrame {
         // TODO add your handling code here:
         deleteBook();
     }//GEN-LAST:event_btnDeleteBookMouseClicked
+
+    private void btnSearchMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSearchMouseClicked
+        // TODO add your handling code here:
+        searchBook();
+    }//GEN-LAST:event_btnSearchMouseClicked
 
     /**
      * @param args the command line arguments
@@ -482,7 +496,6 @@ public class Book extends javax.swing.JFrame {
     private javax.swing.JButton btnSearch;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

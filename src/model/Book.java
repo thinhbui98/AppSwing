@@ -10,7 +10,15 @@ package model;
  * @author Thinh Bui
  */
 public class Book {
-    private String bookname, description;
+    private String bookname, description, categoryname;
+
+    public String getCategoryname() {
+        return categoryname;
+    }
+
+    public void setCategoryname(String categoryname) {
+        this.categoryname = categoryname;
+    }
     int id, category_id, quantity;
 
     public String getBookname() {

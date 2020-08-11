@@ -14,7 +14,13 @@ public class Main extends javax.swing.JFrame {
     /**
      * Creates new form Main
      */
+    private int userId;
     public Main() {
+        initComponents();
+    }
+    
+    public Main(int param){
+        userId = param;
         initComponents();
     }
 
@@ -384,7 +390,7 @@ public class Main extends javax.swing.JFrame {
     Account ac;
     private void jPanel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel5MouseClicked
         // TODO add your handling code here:
-        ac = new Account();
+        ac = new Account(userId);
         ac.setVisible(true);
     }//GEN-LAST:event_jPanel5MouseClicked
 

@@ -78,6 +78,7 @@ public class DAOBook extends DAO{
                 b.setCategory_id(Integer.parseInt(rs.getString("category_id")));
                 b.setDescription(rs.getString("description"));
                 b.setQuantity(Integer.parseInt(rs.getString("quantity")));
+                b.setCategoryname(rs.getString("categoryname"));
                 list.add(b);
             }
         } catch (Exception e) {

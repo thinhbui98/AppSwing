@@ -166,9 +166,9 @@ public class Login extends javax.swing.JFrame {
 //            JOptionPane.showMessageDialog(null, "ĐĂNG NHẬP THÀNH CÔNG");
             dispose();
             if (a.getType() != 1) {
-                new MainStudent().setVisible(true);
+                new MainStudent(a.getId()).setVisible(true);
             } else {
-                new Main().setVisible(true);
+                new Main(a.getId()).setVisible(true);
             }
         }
         else {

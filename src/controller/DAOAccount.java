@@ -48,17 +48,15 @@ public class DAOAccount extends DAO{
             ps.setString(1, a.getUsername());
             ps.setString(2, a.getEmail());
             ResultSet rs = ps.executeQuery();
-            System.out.println("1" + rs.next());
             if(rs.next() == false){
-                String sqlins = "INSERT INTO users(username, password, email) "
-                        + "VALUES(?,?,?)";
+                String sqlins = "INSERT INTO users(username, password, email, type) "
+                        + "VALUES(?,?,?,?)";
                 try {
                     PreparedStatement psins = conn.prepareStatement(sqlins);
                     psins.setString(1, a.getUsername());
                     psins.setString(2, a.getPassword());
                     psins.setString(3, a.getEmail());
-                    
-                    return psins.executeUpdate() > 0;
+                    psins.setInt(4,3);
                     
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -84,17 +82,7 @@ public class DAOAccount extends DAO{
 //        return false;
     }
     
-    public boolean deleteStudent(model.Student s) {
-        try {
-            PreparedStatement ps = conn.prepareStatement("DELETE FROM users WHERE id = " + s.getId());
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-    
-    public boolean updateStudent(model.Student s) {
+    public boolean updateAccount(model.Student s) {
         
         String sql =
                 "UPDATE users " +
@@ -124,22 +112,23 @@ public class DAOAccount extends DAO{
         return false;
     }
     
-    public ArrayList<model.Student> getListSVSearched(String sql) {
-        ArrayList<model.Student> list = new ArrayList<>();
+    public ArrayList<model.Account> getAccount(String sql) {
+        ArrayList<model.Account> list = new ArrayList<>();
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while(rs.next()) {
-                model.Student s = new model.Student();
-                s.setId(rs.getInt("id"));
-                s.setFullname(rs.getString("fullname"));
-                s.setUsername(rs.getString("username"));
-                s.setPassword(rs.getString("password"));
-                s.setEmail(rs.getString("email"));
-                s.setPhone(rs.getString("phone"));
-                s.setAddress(rs.getString("address"));
-                s.setClass_id(rs.getInt("class_id"));
-                list.add(s);
+                model.Account a = new model.Account();
+                System.out.println(rs.getInt("id"));
+                a.setId(rs.getInt("id"));
+                a.setFullname(rs.getString("fullname"));
+                a.setUsername(rs.getString("username"));
+                a.setPassword(rs.getString("password"));
+                a.setEmail(rs.getString("email"));
+                a.setPhone(rs.getString("phone"));
+                a.setAddress(rs.getString("address"));
+                a.setClass_id(rs.getInt("class_id"));
+                list.add(a);
             }
         } catch (Exception e) {
             e.printStackTrace();
