@@ -22,8 +22,17 @@ public class Book extends javax.swing.JFrame {
      */
     DefaultTableModel model;
     private ArrayList<model.Book> list;
+    private int userId;
     public Book() {
         initComponents();
+        list = new DAOBook().getListBookSearched("SELECT books.*,categories.categoryname FROM books INNER JOIN categories ON categories.id = books.category_id WHERE books.deleted = 1 ");
+        model = (DefaultTableModel) tblBook.getModel();
+        showTable();
+    }
+    
+    public Book(int param) {
+        initComponents();
+        userId = param;
         list = new DAOBook().getListBookSearched("SELECT books.*,categories.categoryname FROM books INNER JOIN categories ON categories.id = books.category_id WHERE books.deleted = 1 ");
         model = (DefaultTableModel) tblBook.getModel();
         showTable();
@@ -126,6 +135,17 @@ public class Book extends javax.swing.JFrame {
         tblBook.repaint();
         showTable();
     }
+    
+    private void addRequest(){
+        int r = tblBook.getSelectedRow();
+        model.Book bk = list.get(r);
+        if (bk.getQuantity() < 1) {
+            JOptionPane.showMessageDialog(null, "SÁCH ĐÃ HẾT, VUI LÒNG CHỌN SÁCH KHÁC!");
+        } else {
+            dispose();
+            new Request(bk.getId(),userId).setVisible(true);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -194,8 +214,18 @@ public class Book extends javax.swing.JFrame {
         }
 
         jButton1.setText("Thêm vào yêu cầu");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
 
         jButton2.setText("Thêm danh mục");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton2MouseClicked(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -453,6 +483,17 @@ public class Book extends javax.swing.JFrame {
         // TODO add your handling code here:
         searchBook();
     }//GEN-LAST:event_btnSearchMouseClicked
+
+    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+        // TODO add your handling code here:
+        dispose();
+        new Category().setVisible(true);
+    }//GEN-LAST:event_jButton2MouseClicked
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        // TODO add your handling code here:
+        addRequest();
+    }//GEN-LAST:event_jButton1MouseClicked
 
     /**
      * @param args the command line arguments

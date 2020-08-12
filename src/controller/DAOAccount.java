@@ -41,23 +41,42 @@ public class DAOAccount extends DAO{
     }
     
     public boolean Register(model.Account a) {
-        
-        String sql = "SELECT * FROM users WHERE username = ? OR email = ? ";
+        String sql = "SELECT * FROM users WHERE username = ? AND email = ? ";
+        System.out.println(a.getUsername());
+        System.out.println(a.getEmail());
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, a.getUsername());
             ps.setString(2, a.getEmail());
             ResultSet rs = ps.executeQuery();
+            System.out.println(rs.next());
             if(rs.next() == false){
                 String sqlins = "INSERT INTO users(username, password, email, type) "
                         + "VALUES(?,?,?,?)";
                 try {
                     PreparedStatement psins = conn.prepareStatement(sqlins);
+                    System.out.println(psins);
                     psins.setString(1, a.getUsername());
                     psins.setString(2, a.getPassword());
                     psins.setString(3, a.getEmail());
                     psins.setInt(4,3);
-                    
+                    psins.executeUpdate();
+                    String findUser = "SELECT * FROM users WHERE username = ? OR email = ? ";
+                    try {
+                        PreparedStatement psfindUser = conn.prepareStatement(findUser);
+                        psfindUser.setString(1, a.getUsername());
+                        psfindUser.setString(2, a.getPassword());
+                        ResultSet rsfindUser = psfindUser.executeQuery();
+                        if (rsfindUser.next()) {
+                            a.setId(rsfindUser.getInt("id"));
+                            a.setUsername(rsfindUser.getString("username"));
+                            a.setPassword(rsfindUser.getString("password"));
+                            a.setEmail(rsfindUser.getString("email"));
+                            return true;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -82,7 +101,7 @@ public class DAOAccount extends DAO{
 //        return false;
     }
     
-    public boolean updateAccount(model.Student s) {
+    public boolean updateAccount(model.Account a) {
         
         String sql =
                 "UPDATE users " +
@@ -97,14 +116,14 @@ public class DAOAccount extends DAO{
         
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, s.getUsername());
-            ps.setString(2, s.getPassword());
-            ps.setString(3, s.getFullname());
-            ps.setString(4, s.getPhone());
-            ps.setString(5, s.getEmail());
-            ps.setString(6, s.getAddress());
-            ps.setInt(7, s.getClass_id());
-            ps.setInt(8, s.getId());
+            ps.setString(1, a.getUsername());
+            ps.setString(2, a.getPassword());
+            ps.setString(3, a.getFullname());
+            ps.setString(4, a.getPhone());
+            ps.setString(5, a.getEmail());
+            ps.setString(6, a.getAddress());
+            ps.setInt(7, a.getClass_id());
+            ps.setInt(8, a.getId());
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();

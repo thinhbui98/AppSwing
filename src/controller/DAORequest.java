@@ -6,16 +6,18 @@
 package controller;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
-
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;  
 /**
  *
  * @author Thinh Bui
  */
 public class DAORequest extends DAO{
     public boolean addRequest(model.Request r) {
-        String sql = "INSERT INTO request(user_id, status) "
+        String sql = "INSERT INTO requests(user_id, status) "
                 + "VALUES(?,?)";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -23,6 +25,86 @@ public class DAORequest extends DAO{
             ps.setInt(2, r.getStatus());
             
             return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public boolean addRequestDetail(int user_id, int book_id){
+        String checkPending = "SELECT * FROM requests WHERE deleted = 1 AND status = 4 AND user_id = " + user_id;
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        Statement statement = null;
+        try {
+            //Kiem tra xem da co request cho chua
+            PreparedStatement pscheckPending = conn.prepareStatement(checkPending);
+            ResultSet rscheckPending = pscheckPending.executeQuery();
+            if (rscheckPending.next() == false) {
+                //neu chua co request cho
+                String checkBookRequest = "SELECT request_details.*, requests.user_id FROM request_details INNER JOIN requests ON requests.id = request_details.request_id WHERE request_details.book_id = " + book_id + " AND request_details.deleted = 1 AND request_details.status = 1 AND requests.user_id = " + user_id;
+                try {
+                    PreparedStatement pscheckBookRequest = conn.prepareStatement(checkBookRequest);
+                    ResultSet rscheckBookRequest = pscheckBookRequest.executeQuery();
+                    if (rscheckBookRequest.next()) {
+                        return false;
+                    } else { 
+                        String insertRequest = "INSERT INTO requests(user_id, status) " + "VALUES(?,?)";
+                        int request_id = 0;
+                         try {
+                            PreparedStatement psinsertRequest = conn.prepareStatement(insertRequest);
+                            psinsertRequest.setInt(1, user_id);
+                            psinsertRequest.setInt(2, 1);
+                            if (psinsertRequest.executeUpdate() > 0 ) {
+                                 String insertRequestDetail = "INSERT INTO request_details(book_id, request_id, status, return_date, start_date) " + "VALUES(?,?,?,?)";
+                                try {
+                                    PreparedStatement psinsertRequestDetail = conn.prepareStatement(insertRequestDetail);
+                                    psinsertRequestDetail.setInt(1, book_id);
+                                    psinsertRequestDetail.setInt(2, request_id);
+                                    psinsertRequestDetail.setInt(3, 1);
+                                    psinsertRequestDetail.setString(3, String.valueOf(dtf.format(now)));
+                                    psinsertRequestDetail.setString(4, String.valueOf(dtf.format(now)));
+                                    return psinsertRequestDetail.executeUpdate() > 0;
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                //neu da co request cho
+                String insertRequest = "INSERT INTO requests(user_id, status) " + "VALUES(?,?)";
+                ResultSet result;
+                try {
+                   PreparedStatement psinsertRequest = conn.prepareStatement(insertRequest, Statement.RETURN_GENERATED_KEYS);
+                   psinsertRequest.setInt(1, user_id);
+                   psinsertRequest.setInt(2, 1);
+                   result = psinsertRequest.getGeneratedKeys();
+                   
+                   if ( psinsertRequest.executeUpdate() > 0) {
+                        String insertRequestDetail = "INSERT INTO request_details(book_id, request_id, status, return_date, start_date) " + "VALUES(?,?,?,?,?)";
+                       try {
+                           int id = result.getInt(1);
+                           PreparedStatement psinsertRequestDetail = conn.prepareStatement(insertRequestDetail);
+                           psinsertRequestDetail.setInt(1, book_id);
+                           psinsertRequestDetail.setInt(2, id);
+                           psinsertRequestDetail.setInt(3, 1);
+                           psinsertRequestDetail.setString(3, String.valueOf(dtf.format(now)));
+                           psinsertRequestDetail.setString(4, String.valueOf(dtf.format(now)));
+                           return psinsertRequestDetail.executeUpdate() > 0;
+                       } catch (Exception e) {
+                           e.printStackTrace();
+                       }
+                   }
+               } catch (Exception e) {
+                   e.printStackTrace();
+               }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

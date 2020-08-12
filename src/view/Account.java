@@ -40,6 +40,25 @@ public class Account extends javax.swing.JFrame {
         txtAddress.setText(a.getAddress());
         txtClass.setText(String.valueOf(a.getClass_id()));
     }
+    
+    private void editAccount(){
+        model.Account a = new model.Account();
+        a.setId(Integer.parseInt(txtId.getText()));
+        a.setUsername(txtUsername.getText());
+        a.setPassword(txtPassword.getText());
+        a.setFullname(txtFullname.getText());
+        a.setEmail(txtEmail.getText());
+        a.setPhone(txtPhone.getText());
+        a.setClass_id(Integer.parseInt(txtClass.getText()));
+        a.setAddress(txtAddress.getText());
+                                           
+        if(new DAOAccount().updateAccount(a)) {
+            JOptionPane.showMessageDialog(null, "ĐÃ SỬA");
+        }
+        else {
+            JOptionPane.showMessageDialog(null, "KHÔNG THỂ SỬA");
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -115,6 +134,11 @@ public class Account extends javax.swing.JFrame {
         jScrollPane1.setViewportView(txtAddress);
 
         jPanel2.setBackground(new java.awt.Color(0, 204, 255));
+        jPanel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanel2MouseClicked(evt);
+            }
+        });
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(255, 255, 255));
@@ -136,6 +160,11 @@ public class Account extends javax.swing.JFrame {
         );
 
         jPanel3.setBackground(new java.awt.Color(255, 0, 51));
+        jPanel3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanel3MouseClicked(evt);
+            }
+        });
 
         jLabel11.setBackground(new java.awt.Color(0, 204, 255));
         jLabel11.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -248,6 +277,16 @@ public class Account extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jPanel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel3MouseClicked
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_jPanel3MouseClicked
+
+    private void jPanel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseClicked
+        // TODO add your handling code here:
+        editAccount();
+    }//GEN-LAST:event_jPanel2MouseClicked
 
     /**
      * @param args the command line arguments
