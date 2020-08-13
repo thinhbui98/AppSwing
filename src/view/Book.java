@@ -23,6 +23,7 @@ public class Book extends javax.swing.JFrame {
     DefaultTableModel model;
     private ArrayList<model.Book> list;
     private int userId;
+    private int typeUser;
     public Book() {
         initComponents();
         list = new DAOBook().getListBookSearched("SELECT books.*,categories.categoryname FROM books INNER JOIN categories ON categories.id = books.category_id WHERE books.deleted = 1 ");
@@ -30,9 +31,10 @@ public class Book extends javax.swing.JFrame {
         showTable();
     }
     
-    public Book(int param) {
+    public Book(int param, int type) {
         initComponents();
         userId = param;
+        typeUser = type;
         list = new DAOBook().getListBookSearched("SELECT books.*,categories.categoryname FROM books INNER JOIN categories ON categories.id = books.category_id WHERE books.deleted = 1 ");
         model = (DefaultTableModel) tblBook.getModel();
         showTable();
@@ -143,7 +145,11 @@ public class Book extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "SÁCH ĐÃ HẾT, VUI LÒNG CHỌN SÁCH KHÁC!");
         } else {
             dispose();
-            new Request(bk.getId(),userId).setVisible(true);
+            if (typeUser != 1) {
+                new RequestStudent(bk.getId(),userId).setVisible(true);
+            } else {
+                new Request(bk.getId(),userId).setVisible(true);
+            }
         }
     }
 

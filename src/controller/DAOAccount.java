@@ -72,6 +72,7 @@ public class DAOAccount extends DAO{
                             a.setUsername(rsfindUser.getString("username"));
                             a.setPassword(rsfindUser.getString("password"));
                             a.setEmail(rsfindUser.getString("email"));
+                            a.setType(3);
                             return true;
                         }
                     } catch (Exception e) {

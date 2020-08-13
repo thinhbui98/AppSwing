@@ -15,13 +15,15 @@ public class Main extends javax.swing.JFrame {
      * Creates new form Main
      */
     private int userId;
+    private int typeUser;
     public Main() {
         initComponents();
     }
     
-    public Main(int param){
-        userId = param;
+    public Main(int param, int type){
         initComponents();
+        userId = param;
+        typeUser = type;
     }
 
     /**
@@ -362,7 +364,7 @@ public class Main extends javax.swing.JFrame {
     Book bk;
     private void jPanel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseClicked
         // TODO add your handling code here:
-        bk = new Book(userId);
+        bk = new Book(userId,typeUser);
 //        bk = new Book();
         bk.setVisible(true);
     }//GEN-LAST:event_jPanel1MouseClicked

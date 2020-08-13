@@ -178,7 +178,7 @@ public class Register extends javax.swing.JFrame {
         if(new DAOAccount().Register(a)) {
 //            JOptionPane.showMessageDialog(null, "ĐĂNG KÝ THÀNH CÔNG");
             dispose();
-            new MainStudent(a.getId()).setVisible(true);
+            new MainStudent(a.getId(),a.getType()).setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "KHÔNG THỂ ĐĂNG KÝ");
             txtUsername.setText("");

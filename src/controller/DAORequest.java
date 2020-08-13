@@ -35,7 +35,6 @@ public class DAORequest extends DAO{
         String checkPending = "SELECT * FROM requests WHERE deleted = 1 AND status = 4 AND user_id = " + user_id;
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
-        Statement statement = null;
         try {
             //Kiem tra xem da co request cho chua
             PreparedStatement pscheckPending = conn.prepareStatement(checkPending);
@@ -52,10 +51,17 @@ public class DAORequest extends DAO{
                         String insertRequest = "INSERT INTO requests(user_id, status) " + "VALUES(?,?)";
                         int request_id = 0;
                          try {
-                            PreparedStatement psinsertRequest = conn.prepareStatement(insertRequest);
+                            PreparedStatement psinsertRequest = conn.prepareStatement(insertRequest,Statement.RETURN_GENERATED_KEYS);
                             psinsertRequest.setInt(1, user_id);
                             psinsertRequest.setInt(2, 1);
-                            if (psinsertRequest.executeUpdate() > 0 ) {
+                            psinsertRequest.executeUpdate();
+                            ResultSet rsinsertRequest = psinsertRequest.getGeneratedKeys();
+                             System.out.println(rsinsertRequest.next());
+                            if (rsinsertRequest.next()) {
+                                request_id = rsinsertRequest.getInt(1);
+                            }
+                             System.out.println(request_id);
+                            if (request_id > 0 ) {
                                  String insertRequestDetail = "INSERT INTO request_details(book_id, request_id, status, return_date, start_date) " + "VALUES(?,?,?,?)";
                                 try {
                                     PreparedStatement psinsertRequestDetail = conn.prepareStatement(insertRequestDetail);

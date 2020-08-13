@@ -15,13 +15,15 @@ public class MainStudent extends javax.swing.JFrame {
      * Creates new form Main
      */
     private int userId;
+    private int typeUser;
     public MainStudent() {
         initComponents();
     }
     
-    public MainStudent(int param){
+    public MainStudent(int param, int type){
         initComponents();
         userId = param;
+        typeUser = type;
     }
 
     /**
@@ -218,14 +220,14 @@ public class MainStudent extends javax.swing.JFrame {
     Book bk;
     private void jPanel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseClicked
         // TODO add your handling code here:
-        bk = new Book();
+        bk = new Book(userId,typeUser);
         bk.setVisible(true);
     }//GEN-LAST:event_jPanel1MouseClicked
     
-    Request rq;
+    RequestStudent rq;
     private void jPanel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseClicked
         // TODO add your handling code here:
-        rq = new Request();
+        rq = new RequestStudent(typeUser,userId,"abc");
         rq.setVisible(true);
     }//GEN-LAST:event_jPanel2MouseClicked
 
