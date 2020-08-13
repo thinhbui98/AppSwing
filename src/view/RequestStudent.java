@@ -27,7 +27,11 @@ public class RequestStudent extends javax.swing.JFrame {
     private int userId;
     public RequestStudent() {
         initComponents();
-        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username FROM requests LEFT JOIN users ON users.id = requests.user_id");
+        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username,books.bookname FROM requests "
+                + "INNER JOIN users ON users.id = requests.user_id "
+                + "INNER JOIN request_details ON requests.id = request_details.request_id "
+                + "INNER JOIN books ON books.id = request_details.book_id "
+        );
         model = (DefaultTableModel) tblRequest.getModel();
         showTable();
     }
@@ -38,21 +42,28 @@ public class RequestStudent extends javax.swing.JFrame {
         initComponents();
         bookId = book_id;
         userId = user_id;
-        boolean addRequestDetail = new DAORequest().addRequestDetail(bookId, userId); 
+        boolean addRequestDetail = new DAORequest().addRequestDetail(bookId, userId, 3); 
         if (addRequestDetail) {
             JOptionPane.showMessageDialog(null, "THÊM REQUEST MỚI THÀNH CÔNG");
         } else {
             JOptionPane.showMessageDialog(null, "KHÔNG THỂ THÊM REQUEST MỚI");
         }
+        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username,books.bookname FROM requests "
+                + "INNER JOIN users ON users.id = requests.user_id "
+                + "INNER JOIN request_details ON requests.id = request_details.request_id "
+                + "INNER JOIN books ON books.id = request_details.book_id "
+                + "WHERE requests.user_id = " + user_id);
+        model = (DefaultTableModel) tblRequest.getModel();
         showTable();
     }
     
     public RequestStudent(int type,int user_id,String abc) {
-        if (type != 1) {
-            list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username FROM requests LEFT JOIN users ON users.id = requests.user_id WHERE requests.user_id = " + user_id);
-        } else {
-            list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username FROM requests LEFT JOIN users ON users.id = requests.user_id");
-        }
+        initComponents();
+        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username,books.bookname FROM requests "
+                + "INNER JOIN users ON users.id = requests.user_id "
+                + "INNER JOIN request_details ON requests.id = request_details.request_id "
+                + "INNER JOIN books ON books.id = request_details.book_id "
+                + "WHERE requests.user_id = " + user_id);
         model = (DefaultTableModel) tblRequest.getModel();
         showTable();
     } 
@@ -82,7 +93,7 @@ public class RequestStudent extends javax.swing.JFrame {
                     status = "Đã Trả Sách";
             }
             model.addRow(new Object[] {
-                s.getId(), s.getUsername(), status
+                s.getId(), s.getUsername(), s.getBookname(), status
             });
         });
     }

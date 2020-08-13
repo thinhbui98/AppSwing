@@ -6,6 +6,7 @@
 package controller;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
@@ -14,34 +15,29 @@ import javax.swing.JOptionPane;
  * @author Thinh Bui
  */
 public class DAOAccount extends DAO{
-    public boolean Login(model.Account a) {
+    public boolean Login(model.Account a) throws SQLException, ClassNotFoundException {
         String sql = "SELECT * FROM users WHERE username = ? AND password = ? ";
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, a.getUsername());
-            ps.setString(2, a.getPassword());
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                a.setId(rs.getInt("id"));
-                a.setFullname(rs.getString("fullname"));
-                a.setUsername(rs.getString("username"));
-                a.setPassword(rs.getString("password"));
-                a.setEmail(rs.getString("email"));
-                a.setPhone(rs.getString("phone"));
-                a.setAddress(rs.getString("address"));
-                a.setType(rs.getInt("type"));
-                a.setClass_id(rs.getInt("class_id"));
-                return true;
-            }
-            return false;
-        } catch (Exception e) {
-            e.printStackTrace();
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, a.getUsername());
+        ps.setString(2, a.getPassword());
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            a.setId(rs.getInt("id"));
+            a.setFullname(rs.getString("fullname"));
+            a.setUsername(rs.getString("username"));
+            a.setPassword(rs.getString("password"));
+            a.setEmail(rs.getString("email"));
+            a.setPhone(rs.getString("phone"));
+            a.setAddress(rs.getString("address"));
+            a.setType(rs.getInt("type"));
+            a.setClass_id(rs.getInt("class_id"));
+            return true;
         }
         return false;
     }
     
     public boolean Register(model.Account a) {
-        String sql = "SELECT * FROM users WHERE username = ? AND email = ? ";
+        String sql = "SELECT * FROM users WHERE username = ? OR email = ? ";
         System.out.println(a.getUsername());
         System.out.println(a.getEmail());
         try {
@@ -61,11 +57,12 @@ public class DAOAccount extends DAO{
                     psins.setString(3, a.getEmail());
                     psins.setInt(4,3);
                     psins.executeUpdate();
-                    String findUser = "SELECT * FROM users WHERE username = ? OR email = ? ";
+                    String findUser = "SELECT * FROM users WHERE username = ? AND email = ? AND password = ? LIMIT 1";
                     try {
                         PreparedStatement psfindUser = conn.prepareStatement(findUser);
                         psfindUser.setString(1, a.getUsername());
-                        psfindUser.setString(2, a.getPassword());
+                        psfindUser.setString(2, a.getEmail());
+                        psfindUser.setString(3, a.getPassword());
                         ResultSet rsfindUser = psfindUser.executeQuery();
                         if (rsfindUser.next()) {
                             a.setId(rsfindUser.getInt("id"));
@@ -87,19 +84,6 @@ public class DAOAccount extends DAO{
             e.printStackTrace();
         }
         return false;
-//        String sql = "INSERT INTO users(username, password, email) "
-//                + "VALUES(?,?,?)";
-//        try {
-//            PreparedStatement ps = conn.prepareStatement(sql);
-//            ps.setString(1, a.getUsername());
-//            ps.setString(2, a.getPassword());
-//            ps.setString(5, a.getEmail());
-//            
-//            return ps.executeUpdate() > 0;
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return false;
     }
     
     public boolean updateAccount(model.Account a) {
@@ -114,7 +98,6 @@ public class DAOAccount extends DAO{
                 "address = ?, " +
                 "class_id = ? " +
                 "WHERE id = ?"; 
-        
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, a.getUsername());

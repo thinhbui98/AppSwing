@@ -10,7 +10,16 @@ package model;
  * @author Thinh Bui
  */
 public class Request {
-    private String username;
+    private String username, bookname;
+    int id, user_id, status;
+    
+    public String getBookname() {
+        return bookname;
+    }
+
+    public void setBookname(String bookname) {
+        this.bookname = bookname;
+    }
 
     public String getUsername() {
         return username;
@@ -19,8 +28,7 @@ public class Request {
     public void setUsername(String username) {
         this.username = username;
     }
-    int id, user_id, status;
-
+    
     public int getId() {
         return id;
     }

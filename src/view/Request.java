@@ -25,42 +25,45 @@ public class Request extends javax.swing.JFrame {
     model.Account account;
     private int bookId;
     private int userId;
+    private int typeUser;
     public Request() {
         initComponents();
-        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username FROM requests LEFT JOIN users ON users.id = requests.user_id");
+        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username,books.bookname FROM requests "
+                + "INNER JOIN users ON users.id = requests.user_id "
+                + "INNER JOIN request_details ON requests.id = request_details.request_id "
+                + "INNER JOIN books ON books.id = request_details.book_id "
+        );
         model = (DefaultTableModel) tblRequest.getModel();
         showTable();
     }
     
 
     
-    public Request(int book_id,int user_id){
+    public Request(int book_id, int user_id, int type){
         initComponents();
         bookId = book_id;
         userId = user_id;
-        boolean addRequestDetail = new DAORequest().addRequestDetail(bookId, userId); 
+        typeUser = type;
+        boolean addRequestDetail = new DAORequest().addRequestDetail(bookId, userId, typeUser); 
         if (addRequestDetail) {
             JOptionPane.showMessageDialog(null, "THÊM REQUEST MỚI THÀNH CÔNG");
         } else {
             JOptionPane.showMessageDialog(null, "KHÔNG THỂ THÊM REQUEST MỚI");
         }
-        showTable();
-    }
-    
-    public Request(int type,int user_id,String abc) {
-        if (type != 1) {
-            list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username FROM requests LEFT JOIN users ON users.id = requests.user_id WHERE requests.user_id = " + user_id);
-        } else {
-            list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username FROM requests LEFT JOIN users ON users.id = requests.user_id");
-        }
+        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username,books.bookname FROM requests "
+                + "INNER JOIN users ON users.id = requests.user_id "
+                + "INNER JOIN request_details ON requests.id = request_details.request_id "
+                + "INNER JOIN books ON books.id = request_details.book_id "
+        );
         model = (DefaultTableModel) tblRequest.getModel();
         showTable();
-    } 
+    }
     
     public void showTable() {
         tblRequest.getColumnModel().getColumn(0).setPreferredWidth(5);
         tblRequest.getColumnModel().getColumn(1).setPreferredWidth(70);
-        tblRequest.getColumnModel().getColumn(2).setPreferredWidth(70);    
+        tblRequest.getColumnModel().getColumn(2).setPreferredWidth(70);
+        tblRequest.getColumnModel().getColumn(3).setPreferredWidth(10); 
         tblRequest.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         
         list.forEach((s) -> {
@@ -82,7 +85,7 @@ public class Request extends javax.swing.JFrame {
                     status = "Đã Trả Sách";
             }
             model.addRow(new Object[] {
-                s.getId(), s.getUsername(), status
+                s.getId(), s.getUsername(), s.getBookname(), status
             });
         });
     }
@@ -105,16 +108,16 @@ public class Request extends javax.swing.JFrame {
 //        }
 //    }
     private void acceptRequest() {
-        int r = tblRequest.getSelectedRow();                   //get selected row
+        int r = tblRequest.getSelectedRow();                   
         model.Request rq = new model.Request();
         
-        rq.setId(Integer.parseInt(txtId.getText()));              // only need MaSinhVien because of Delete statement in DAOSinhVien
+        rq.setId(Integer.parseInt(txtId.getText()));              
 
-        list.remove(rq);                                         // delete selected row in List           
+        list.remove(rq);                                                   
         
-        if(new DAORequest().acceptRequest(rq)) {                // delete selected row in Database 
-            JOptionPane.showMessageDialog(null, "ĐÃ XÓA");      // with which MaSinhVien is a Condition
-            model.removeRow(r);                                 // delete selected row in table
+        if(new DAORequest().acceptRequest(rq)) {                 
+            JOptionPane.showMessageDialog(null, "ĐÃ XÓA");      
+            model.removeRow(r);                                 
         }                                                       
         else {
             JOptionPane.showMessageDialog(null, "KHÔNG THỂ XÓA");
@@ -123,16 +126,16 @@ public class Request extends javax.swing.JFrame {
     
     
     private void deleteRequest() {
-        int r = tblRequest.getSelectedRow();                   //get selected row
+        int r = tblRequest.getSelectedRow();                 
         model.Request rq = new model.Request();
         
-        rq.setId(Integer.parseInt(txtId.getText()));              // only need MaSinhVien because of Delete statement in DAOSinhVien
+        rq.setId(Integer.parseInt(txtId.getText())); 
 
-        list.remove(rq);                                         // delete selected row in List           
+        list.remove(rq);                                                
         
-        if(new DAORequest().deleteRequest(rq)) {                // delete selected row in Database 
-            JOptionPane.showMessageDialog(null, "ĐÃ XÓA");      // with which MaSinhVien is a Condition
-            model.removeRow(r);                                 // delete selected row in table
+        if(new DAORequest().deleteRequest(rq)) {                
+            JOptionPane.showMessageDialog(null, "ĐÃ XÓA");    
+            model.removeRow(r);                               
         }                                                       
         else {
             JOptionPane.showMessageDialog(null, "KHÔNG THỂ XÓA");
@@ -157,17 +160,15 @@ public class Request extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         txtUsername = new javax.swing.JTextField();
-        jPanel2 = new javax.swing.JPanel();
+        btnAccept = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
+        btnDecline = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         txtStatus = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         txtId = new javax.swing.JTextField();
-        jPanel4 = new javax.swing.JPanel();
-        jLabel8 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txtBookRequest = new javax.swing.JTextField();
         jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
 
@@ -182,11 +183,11 @@ public class Request extends javax.swing.JFrame {
 
             },
             new String [] {
-                "STT", "Tên người dùng", "Trạng thái"
+                "STT", "Tên người dùng", "Tên sách", "Trạng thái"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -211,48 +212,53 @@ public class Request extends javax.swing.JFrame {
 
         jLabel3.setText("Sách yêu cầu:");
 
-        jPanel2.setBackground(new java.awt.Color(0, 255, 0));
+        btnAccept.setBackground(new java.awt.Color(0, 255, 0));
+        btnAccept.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnAcceptMouseClicked(evt);
+            }
+        });
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Duyệt");
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout btnAcceptLayout = new javax.swing.GroupLayout(btnAccept);
+        btnAccept.setLayout(btnAcceptLayout);
+        btnAcceptLayout.setHorizontalGroup(
+            btnAcceptLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btnAcceptLayout.createSequentialGroup()
                 .addGap(40, 40, 40)
                 .addComponent(jLabel4)
                 .addGap(40, 40, 40))
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        btnAcceptLayout.setVerticalGroup(
+            btnAcceptLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        jPanel3.setBackground(new java.awt.Color(255, 0, 0));
-        jPanel3.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnDecline.setBackground(new java.awt.Color(255, 0, 0));
+        btnDecline.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jPanel3MouseClicked(evt);
+                btnDeclineMouseClicked(evt);
             }
         });
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setText("Xóa");
+        jLabel5.setText("Từ chối");
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout btnDeclineLayout = new javax.swing.GroupLayout(btnDecline);
+        btnDecline.setLayout(btnDeclineLayout);
+        btnDeclineLayout.setHorizontalGroup(
+            btnDeclineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btnDeclineLayout.createSequentialGroup()
                 .addGap(40, 40, 40)
                 .addComponent(jLabel5)
                 .addGap(40, 40, 40))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        btnDeclineLayout.setVerticalGroup(
+            btnDeclineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
         );
 
@@ -262,55 +268,32 @@ public class Request extends javax.swing.JFrame {
 
         txtId.setEditable(false);
 
-        jPanel4.setBackground(new java.awt.Color(255, 102, 102));
-
-        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel8.setText("Xóa sách");
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addComponent(jLabel8)
-                .addGap(40, 40, 40))
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(51, 51, 51)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(31, 31, 31)
+                .addGap(30, 30, 30)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
                     .addComponent(jLabel6)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3))
-                        .addGap(48, 48, 48)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtId)
-                            .addComponent(txtUsername)
-                            .addComponent(txtStatus)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(60, 60, 60))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(btnAccept, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnDecline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel2)
+                                .addComponent(jLabel3))
+                            .addGap(48, 48, 48)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(txtId)
+                                .addComponent(txtUsername)
+                                .addComponent(txtStatus)
+                                .addComponent(txtBookRequest, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addGap(30, 30, 30))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -331,12 +314,11 @@ public class Request extends javax.swing.JFrame {
                 .addGap(22, 22, 22)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtBookRequest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(60, 60, 60)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnDecline, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnAccept, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(20, 20, 20))
         );
 
@@ -368,7 +350,7 @@ public class Request extends javax.swing.JFrame {
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))))
@@ -404,24 +386,26 @@ public class Request extends javax.swing.JFrame {
                     status = "Đã Trả Sách";
             }
             txtStatus.setText(status);
-            
-            listrd = new DAORequest().getListRequestDetailSearched("SELECT request_details.* FROM request_details " +
-                    "INNER JOIN books ON request_details.book_id = books.id " +
-                    "INNER JOIN requests ON requests.id = request_details.request_id " +
-                    "INNER JOIN users ON requests.user_id = users.id " +
-                    "WHERE request_details.request_id = " + rq.getId() +
-                    " ORDER BY request_details.id DESC");
-            
-            System.out.println(listrd);
-//            txtList.setModel(listrd);
-            
+            txtBookRequest.setText(rq.getBookname());
+            if (rq.getStatus() < 3 || rq.getStatus() > 4) {
+                btnAccept.setVisible(false);
+                btnDecline.setVisible(false);
+            } else {
+                btnAccept.setVisible(true);
+                btnDecline.setVisible(true);
+            }
         }
     }//GEN-LAST:event_tblRequestMouseClicked
 
-    private void jPanel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel3MouseClicked
+    private void btnDeclineMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDeclineMouseClicked
         // TODO add your handling code here:
         deleteRequest();
-    }//GEN-LAST:event_jPanel3MouseClicked
+    }//GEN-LAST:event_btnDeclineMouseClicked
+
+    private void btnAcceptMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAcceptMouseClicked
+        // TODO add your handling code here:
+        acceptRequest();
+    }//GEN-LAST:event_btnAcceptMouseClicked
 
     /**
      * @param args the command line arguments
@@ -459,6 +443,8 @@ public class Request extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel btnAccept;
+    private javax.swing.JPanel btnDecline;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -469,15 +455,11 @@ public class Request extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JTable tblRequest;
+    private javax.swing.JTextField txtBookRequest;
     private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtStatus;
     private javax.swing.JTextField txtUsername;

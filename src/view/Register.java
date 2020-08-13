@@ -6,6 +6,9 @@
 package view;
 
 import controller.DAOAccount; 
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -174,11 +177,11 @@ public class Register extends javax.swing.JFrame {
         a.setUsername(txtUsername.getText());
         a.setPassword(txtPassword.getText());
         a.setEmail(txtEmail.getText());
-        
+
         if(new DAOAccount().Register(a)) {
-//            JOptionPane.showMessageDialog(null, "ĐĂNG KÝ THÀNH CÔNG");
-            dispose();
-            new MainStudent(a.getId(),a.getType()).setVisible(true);
+        //JOptionPane.showMessageDialog(null, "ĐĂNG KÝ THÀNH CÔNG");
+        dispose();
+        new MainStudent(a.getId(),a.getType()).setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "KHÔNG THỂ ĐĂNG KÝ");
             txtUsername.setText("");

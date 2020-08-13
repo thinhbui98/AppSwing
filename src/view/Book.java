@@ -148,7 +148,7 @@ public class Book extends javax.swing.JFrame {
             if (typeUser != 1) {
                 new RequestStudent(bk.getId(),userId).setVisible(true);
             } else {
-                new Request(bk.getId(),userId).setVisible(true);
+                new Request(bk.getId(),userId,typeUser).setVisible(true);
             }
         }
     }

@@ -5,7 +5,11 @@
  */
 package view;
 import controller.DAOAccount;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+
 /**
  *
  * @author Thinh Bui
@@ -157,24 +161,29 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_txtUsernameActionPerformed
 
     private void btnLoginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLoginMouseClicked
-        // TODO add your handling code here:
-        model.Account a = new model.Account();
-        a.setUsername(txtUsername.getText());
-        a.setPassword(txtPassword.getText());
-        
-        if(new DAOAccount().Login(a)) {
+        try {
+            // TODO add your handling code here:
+            model.Account a = new model.Account();
+            a.setUsername(txtUsername.getText());
+            a.setPassword(txtPassword.getText());
+            
+            if(new DAOAccount().Login(a)) {
 //            JOptionPane.showMessageDialog(null, "ĐĂNG NHẬP THÀNH CÔNG");
-            dispose();
-            if (a.getType() != 1) {
-                new MainStudent(a.getId(),a.getType()).setVisible(true);
+                dispose();
+                if (a.getType() != 1) {
+                    new MainStudent(a.getId(),a.getType()).setVisible(true);
+                } else {
+                    new Main(a.getId(),a.getType()).setVisible(true);
+                }
             } else {
-                new Main(a.getId(),a.getType()).setVisible(true);
+                JOptionPane.showMessageDialog(null, "KHÔNG THỂ ĐĂNG NHẬP");
+                txtUsername.setText("");
+                txtPassword.setText("");
             }
-        }
-        else {
-            JOptionPane.showMessageDialog(null, "KHÔNG THỂ ĐĂNG NHẬP");
-            txtUsername.setText("");
-            txtPassword.setText("");
+        } catch (SQLException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnLoginMouseClicked
 

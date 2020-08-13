@@ -227,6 +227,8 @@ public class MainStudent extends javax.swing.JFrame {
     RequestStudent rq;
     private void jPanel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseClicked
         // TODO add your handling code here:
+        System.out.println(typeUser);
+        System.out.println(userId);
         rq = new RequestStudent(typeUser,userId,"abc");
         rq.setVisible(true);
     }//GEN-LAST:event_jPanel2MouseClicked
