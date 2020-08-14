@@ -121,7 +121,7 @@ public class DAORequest extends DAO{
     
     public boolean acceptRequest(model.Request r) {
         try {
-            PreparedStatement ps = conn.prepareStatement("UPDATE request SET status = 1 WHERE id = " + r.getId());
+            PreparedStatement ps = conn.prepareStatement("UPDATE requests SET status = 1 WHERE id = " + r.getId());
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -131,7 +131,7 @@ public class DAORequest extends DAO{
     
     public boolean declineRequest(model.Request r) {
         try {
-            PreparedStatement ps = conn.prepareStatement("UPDATE request SET status = 2 WHERE id = " + r.getId());
+            PreparedStatement ps = conn.prepareStatement("UPDATE requests SET status = 2 WHERE id = " + r.getId());
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();

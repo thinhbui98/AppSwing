@@ -37,8 +37,6 @@ public class Request extends javax.swing.JFrame {
         showTable();
     }
     
-
-    
     public Request(int book_id, int user_id, int type){
         initComponents();
         bookId = book_id;
@@ -56,6 +54,21 @@ public class Request extends javax.swing.JFrame {
                 + "INNER JOIN books ON books.id = request_details.book_id "
         );
         model = (DefaultTableModel) tblRequest.getModel();
+        showTable();
+    }
+    
+    private void loadData() {
+        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username,books.bookname FROM requests "
+                + "INNER JOIN users ON users.id = requests.user_id "
+                + "INNER JOIN request_details ON requests.id = request_details.request_id "
+                + "INNER JOIN books ON books.id = request_details.book_id "
+        );
+                                                               
+        for (int i = model.getRowCount()-1; i >= 0; i--) {
+            model.removeRow(i);                                
+        }                                                      
+
+        tblRequest.repaint();
         showTable();
     }
     
@@ -90,55 +103,30 @@ public class Request extends javax.swing.JFrame {
         });
     }
     
-//    private void addRequest() {
-//        model.Request r = new model.Request();
-//        
-//        r.getUser_id(txt.getText());
-//        b.setCategory_id(Integer.parseInt(txtCategory.getText()));
-//        b.setDescription(txtDescription.getText());
-//        b.setQuantity(Integer.parseInt(txtQuantity.getText()));
-//        list.add(b);
-//        
-//        if(new DAOBook().addBook(b)) {
-//            JOptionPane.showMessageDialog(null, "ĐÃ THÊM");
-//            loadData();
-//        }
-//        else {
-//            JOptionPane.showMessageDialog(null, "KHÔNG THỂ THÊM");
-//        }
-//    }
     private void acceptRequest() {
         int r = tblRequest.getSelectedRow();                   
         model.Request rq = new model.Request();
-        
-        rq.setId(Integer.parseInt(txtId.getText()));              
-
-        list.remove(rq);                                                   
-        
+        rq.setId(Integer.parseInt(txtId.getText()));
         if(new DAORequest().acceptRequest(rq)) {                 
-            JOptionPane.showMessageDialog(null, "ĐÃ XÓA");      
-            model.removeRow(r);                                 
+            JOptionPane.showMessageDialog(null, "ĐÃ DUYỆT");    
+            loadData();
         }                                                       
         else {
-            JOptionPane.showMessageDialog(null, "KHÔNG THỂ XÓA");
+            JOptionPane.showMessageDialog(null, "KHÔNG THỂ DUYỆT");
         }
     }
     
     
-    private void deleteRequest() {
+    private void declineRequest() {
         int r = tblRequest.getSelectedRow();                 
         model.Request rq = new model.Request();
-        
         rq.setId(Integer.parseInt(txtId.getText())); 
-
-        list.remove(rq);                                                
-        
         if(new DAORequest().deleteRequest(rq)) {                
-            JOptionPane.showMessageDialog(null, "ĐÃ XÓA");    
-            model.removeRow(r);                               
+            JOptionPane.showMessageDialog(null, "ĐÃ TỪ CHỐI");    
+            loadData();                        
         }                                                       
         else {
-            JOptionPane.showMessageDialog(null, "KHÔNG THỂ XÓA");
+            JOptionPane.showMessageDialog(null, "KHÔNG THỂ TỪ CHỐI");
         }
     }
     
@@ -399,7 +387,7 @@ public class Request extends javax.swing.JFrame {
 
     private void btnDeclineMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDeclineMouseClicked
         // TODO add your handling code here:
-        deleteRequest();
+        declineRequest();
     }//GEN-LAST:event_btnDeclineMouseClicked
 
     private void btnAcceptMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAcceptMouseClicked

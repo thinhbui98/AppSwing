@@ -98,58 +98,6 @@ public class RequestStudent extends javax.swing.JFrame {
         });
     }
     
-//    private void addRequest() {
-//        model.Request r = new model.Request();
-//        
-//        r.getUser_id(txt.getText());
-//        b.setCategory_id(Integer.parseInt(txtCategory.getText()));
-//        b.setDescription(txtDescription.getText());
-//        b.setQuantity(Integer.parseInt(txtQuantity.getText()));
-//        list.add(b);
-//        
-//        if(new DAOBook().addBook(b)) {
-//            JOptionPane.showMessageDialog(null, "ĐÃ THÊM");
-//            loadData();
-//        }
-//        else {
-//            JOptionPane.showMessageDialog(null, "KHÔNG THỂ THÊM");
-//        }
-//    }
-    private void acceptRequest() {
-        int r = tblRequest.getSelectedRow();                   //get selected row
-        model.Request rq = new model.Request();
-        
-        rq.setId(Integer.parseInt(txtId.getText()));              // only need MaSinhVien because of Delete statement in DAOSinhVien
-
-        list.remove(rq);                                         // delete selected row in List           
-        
-        if(new DAORequest().acceptRequest(rq)) {                // delete selected row in Database 
-            JOptionPane.showMessageDialog(null, "ĐÃ XÓA");      // with which MaSinhVien is a Condition
-            model.removeRow(r);                                 // delete selected row in table
-        }                                                       
-        else {
-            JOptionPane.showMessageDialog(null, "KHÔNG THỂ XÓA");
-        }
-    }
-    
-    
-    private void deleteRequest() {
-        int r = tblRequest.getSelectedRow();                   //get selected row
-        model.Request rq = new model.Request();
-        
-        rq.setId(Integer.parseInt(txtId.getText()));              // only need MaSinhVien because of Delete statement in DAOSinhVien
-
-        list.remove(rq);                                         // delete selected row in List           
-        
-        if(new DAORequest().deleteRequest(rq)) {                // delete selected row in Database 
-            JOptionPane.showMessageDialog(null, "ĐÃ XÓA");      // with which MaSinhVien is a Condition
-            model.removeRow(r);                                 // delete selected row in table
-        }                                                       
-        else {
-            JOptionPane.showMessageDialog(null, "KHÔNG THỂ XÓA");
-        }
-    }
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -172,7 +120,7 @@ public class RequestStudent extends javax.swing.JFrame {
         txtStatus = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         txtId = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        txtBookRequest = new javax.swing.JTextField();
         jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
 
@@ -187,11 +135,11 @@ public class RequestStudent extends javax.swing.JFrame {
 
             },
             new String [] {
-                "STT", "Tên người dùng", "Trạng thái"
+                "STT", "Tên người dùng", "Tên sách", "Trạng thái"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -241,7 +189,7 @@ public class RequestStudent extends javax.swing.JFrame {
                             .addComponent(txtId)
                             .addComponent(txtUsername)
                             .addComponent(txtStatus)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(txtBookRequest, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -263,7 +211,7 @@ public class RequestStudent extends javax.swing.JFrame {
                 .addGap(22, 22, 22)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtBookRequest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(131, Short.MAX_VALUE))
         );
 
@@ -331,17 +279,7 @@ public class RequestStudent extends javax.swing.JFrame {
                     status = "Đã Trả Sách";
             }
             txtStatus.setText(status);
-            
-            listrd = new DAORequest().getListRequestDetailSearched("SELECT request_details.* FROM request_details " +
-                    "INNER JOIN books ON request_details.book_id = books.id " +
-                    "INNER JOIN requests ON requests.id = request_details.request_id " +
-                    "INNER JOIN users ON requests.user_id = users.id " +
-                    "WHERE request_details.request_id = " + rq.getId() +
-                    " ORDER BY request_details.id DESC");
-            
-            System.out.println(listrd);
-//            txtList.setModel(listrd);
-            
+            txtBookRequest.setText(rq.getBookname());
         }
     }//GEN-LAST:event_tblRequestMouseClicked
 
@@ -393,8 +331,8 @@ public class RequestStudent extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JTable tblRequest;
+    private javax.swing.JTextField txtBookRequest;
     private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtStatus;
     private javax.swing.JTextField txtUsername;

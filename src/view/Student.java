@@ -45,11 +45,11 @@ public class Student extends javax.swing.JFrame {
     }
     
     private void loadData() {
-        list = new DAOStudent().getListSVSearched("SELECT * FROM users WHERE type = 3");     //Load lại ArrayList lấy từ CSDL
+        list = new DAOStudent().getListSVSearched("SELECT * FROM users WHERE type = 3");  
                                                                
-        for (int i = model.getRowCount()-1; i >= 0; i--) {     //Xóa hết Row cũ trên bảng đồng thời
-            model.removeRow(i);                                //load lại Row dữ liệu mới vào bảng
-        }                                                      //nhằm làm mới lại cột ID để hỗ trợ cho việc getID()
+        for (int i = model.getRowCount()-1; i >= 0; i--) {    
+            model.removeRow(i);                              
+        }                                                      
 
         tblStudent.repaint();
         showTable();
@@ -109,16 +109,15 @@ public class Student extends javax.swing.JFrame {
     }
     
     private void deleteStudent() {
-        int r = tblStudent.getSelectedRow();                   //get selected row
+        int r = tblStudent.getSelectedRow();                   
         model.Student s = new model.Student();
         
-        s.setId(Integer.parseInt(txtId.getText()));              // only need MaSinhVien because of Delete statement in DAOSinhVien
-
-        list.remove(r);                                         // delete selected row in List           
+        s.setId(Integer.parseInt(txtId.getText()));             
+        list.remove(r);                                               
         
-        if(new DAOStudent().deleteStudent(s)) {                // delete selected row in Database 
-            JOptionPane.showMessageDialog(null, "ĐÃ XÓA");      // with which MaSinhVien is a Condition
-            model.removeRow(r);                                 // delete selected row in table
+        if(new DAOStudent().deleteStudent(s)) {               
+            JOptionPane.showMessageDialog(null, "ĐÃ XÓA");     
+            model.removeRow(r);                                
         }                                                       
         else {
             JOptionPane.showMessageDialog(null, "KHÔNG THỂ XÓA");

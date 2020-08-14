@@ -42,11 +42,11 @@ public class Category extends javax.swing.JFrame {
     }
     
     private void loadData() {
-        list = new DAOCategory().getListCategorySearched("SELECT * FROM categories WHERE deleted = 1");     //Load lại ArrayList lấy từ CSDL
+        list = new DAOCategory().getListCategorySearched("SELECT * FROM categories WHERE deleted = 1");
                                                                
-        for (int i = model.getRowCount()-1; i >= 0; i--) {     //Xóa hết Row cũ trên bảng đồng thời
-            model.removeRow(i);                                //load lại Row dữ liệu mới vào bảng
-        }                                                      //nhằm làm mới lại cột ID để hỗ trợ cho việc getID()
+        for (int i = model.getRowCount()-1; i >= 0; i--) {    
+            model.removeRow(i);                               
+        }                                                     
 
         tblCategory.repaint();
         showTable();
@@ -91,16 +91,16 @@ public class Category extends javax.swing.JFrame {
     }
     
     private void deleteCategory() {
-        int r = tblCategory.getSelectedRow();                   //get selected row
+        int r = tblCategory.getSelectedRow();                   
         model.Category c = new model.Category();
         
-        c.setId(Integer.parseInt(txtId.getText()));              // only need MaSinhVien because of Delete statement in DAOSinhVien
+        c.setId(Integer.parseInt(txtId.getText()));             
 
-        list.remove(r);                                         // delete selected row in List           
+        list.remove(r);                                                   
         
-        if(new DAOCategory().deleteCategory(c)) {                // delete selected row in Database 
-            JOptionPane.showMessageDialog(null, "ĐÃ XÓA");      // with which MaSinhVien is a Condition
-            model.removeRow(r);                                 // delete selected row in table
+        if(new DAOCategory().deleteCategory(c)) {                
+            JOptionPane.showMessageDialog(null, "ĐÃ XÓA");      
+            model.removeRow(r);                                 
         }                                                       
         else {
             JOptionPane.showMessageDialog(null, "KHÔNG THỂ XÓA");

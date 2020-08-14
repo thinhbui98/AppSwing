@@ -397,8 +397,11 @@ public class Main extends javax.swing.JFrame {
         ac.setVisible(true);
     }//GEN-LAST:event_jPanel5MouseClicked
 
+    Statistic sc;
     private void jPanel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel3MouseClicked
         // TODO add your handling code here:
+        sc = new Statistic();
+        sc.setVisible(true);
     }//GEN-LAST:event_jPanel3MouseClicked
 
     /**
