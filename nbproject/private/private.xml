@@ -3,24 +3,26 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/NghiaTB/Documents/GitHub/AppSwing/src/view/Request.java</file>
-            <file>file:/C:/Users/NghiaTB/Documents/GitHub/AppSwing/src/view/Student.java</file>
-            <file>file:/C:/Users/NghiaTB/Documents/GitHub/AppSwing/src/controller/DAO.java</file>
-            <file>file:/C:/Users/NghiaTB/Documents/GitHub/AppSwing/src/view/MainStudent.java</file>
-            <file>file:/C:/Users/NghiaTB/Documents/GitHub/AppSwing/src/view/Account.java</file>
-            <file>file:/C:/Users/NghiaTB/Documents/GitHub/AppSwing/src/view/RequestStudent.java</file>
-            <file>file:/C:/Users/NghiaTB/Documents/GitHub/AppSwing/src/view/Register.java</file>
-            <file>file:/C:/Users/NghiaTB/Documents/GitHub/AppSwing/src/view/Main.java</file>
-            <file>file:/C:/Users/NghiaTB/Documents/GitHub/AppSwing/src/view/Statistic.java</file>
-            <file>file:/C:/Users/NghiaTB/Documents/GitHub/AppSwing/src/model/Account.java</file>
-            <file>file:/C:/Users/NghiaTB/Documents/GitHub/AppSwing/src/view/Login.java</file>
-            <file>file:/C:/Users/NghiaTB/Documents/GitHub/AppSwing/src/controller/DAORequest.java</file>
-            <file>file:/C:/Users/NghiaTB/Documents/GitHub/AppSwing/src/controller/DAOStudent.java</file>
-            <file>file:/C:/Users/NghiaTB/Documents/GitHub/AppSwing/src/view/Book.java</file>
-            <file>file:/C:/Users/NghiaTB/Documents/GitHub/AppSwing/src/controller/DAOAccount.java</file>
-            <file>file:/C:/Users/NghiaTB/Documents/GitHub/AppSwing/src/controller/DAOCategory.java</file>
-            <file>file:/C:/Users/NghiaTB/Documents/GitHub/AppSwing/src/view/Category.java</file>
-            <file>file:/C:/Users/NghiaTB/Documents/GitHub/AppSwing/src/controller/DAOBook.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/view/Student.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/view/Category.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/view/Request.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/view/Book.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/view/RequestStudent.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/view/Register.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/model/Student.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/view/Account.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/controller/DAOBook.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/view/Main.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/view/MainStudent.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/view/Statistic.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/model/Request.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/model/Account.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/controller/DAOStudent.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/view/Login.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/model/Book.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/model/RequestDetail.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/controller/DAOAccount.java</file>
+            <file>file:/C:/Users/Thinh%20Bui/Documents/NetBeansProjects/BookManagementSwing/src/controller/DAORequest.java</file>
         </group>
     </open-files>
 </project-private>

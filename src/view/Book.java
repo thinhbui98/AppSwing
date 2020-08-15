@@ -88,7 +88,7 @@ public class Book extends javax.swing.JFrame {
         model.Book b = new model.Book();
         b.setId(Integer.parseInt(txtId.getText()));
         b.setBookname(txtBookname.getText());
-        b.setCategory_id(Integer.parseInt(txtCategory.getText()));
+//        b.setCategory_id(Integer.parseInt(txtCategory.getText()));
         b.setDescription(txtDescription.getText());
         b.setQuantity(Integer.parseInt(txtQuantity.getText()));
                                                             
@@ -98,7 +98,7 @@ public class Book extends javax.swing.JFrame {
             model.Book bk = list.get(r);
             JOptionPane.showMessageDialog(null, "ĐÃ SỬA");
             txtBookname.setText(bk.getBookname());
-            txtCategory.setText(String.valueOf(bk.getCategory_id()));
+//            txtCategory.setText(String.valueOf(bk.getCategory_id())); 
             txtDescription.setText(bk.getDescription());
             txtQuantity.setText(String.valueOf(bk.getQuantity()));
             loadData();
@@ -144,11 +144,10 @@ public class Book extends javax.swing.JFrame {
         if (bk.getQuantity() < 1) {
             JOptionPane.showMessageDialog(null, "SÁCH ĐÃ HẾT, VUI LÒNG CHỌN SÁCH KHÁC!");
         } else {
-            dispose();
             if (typeUser != 1) {
-                new RequestStudent(bk.getId(),userId).setVisible(true);
+                new RequestStudent(bk.getId(),userId);
             } else {
-                new Request(bk.getId(),userId,typeUser).setVisible(true);
+                new Request(bk.getId(),userId,typeUser);
             }
         }
     }

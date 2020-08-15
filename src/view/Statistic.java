@@ -26,7 +26,7 @@ public class Statistic extends javax.swing.JFrame {
     private int typeUser;
     public Statistic() {
         initComponents();
-        list = new DAOBook().getListBookSearched("SELECT books.*,categories.categoryname FROM books INNER JOIN categories ON categories.id = books.category_id WHERE books.deleted = 1 ");
+        list = new DAOBook().getListBookSearched("SELECT books.*,categories.categoryname FROM books INNER JOIN categories ON categories.id = books.category_id WHERE books.deleted = 1 AND books.quantity > 0");
         model = (DefaultTableModel) tblBook.getModel();
         showTable();
     }
@@ -35,7 +35,7 @@ public class Statistic extends javax.swing.JFrame {
         initComponents();
         userId = param;
         typeUser = type;
-        list = new DAOBook().getListBookSearched("SELECT books.*,categories.categoryname FROM books INNER JOIN categories ON categories.id = books.category_id WHERE books.deleted = 1 ");
+        list = new DAOBook().getListBookSearched("SELECT books.*,categories.categoryname FROM books INNER JOIN categories ON categories.id = books.category_id WHERE books.deleted = 1 AND books.quantity > 0");
         model = (DefaultTableModel) tblBook.getModel();
         showTable();
     }
@@ -56,7 +56,7 @@ public class Statistic extends javax.swing.JFrame {
     
     private void searchBook(){
         
-        list = new DAOBook().getListBookSearched("SELECT books.*,categories.categoryname FROM books INNER JOIN categories ON categories.id = books.category_id WHERE books.deleted = 1 AND books.bookname LIKE '%" + txtSearch.getText() + "%'");
+        list = new DAOBook().getListBookSearched("SELECT books.*,categories.categoryname FROM books INNER JOIN categories ON categories.id = books.category_id WHERE books.deleted = 1 AND books.quantity > 0 AND books.bookname LIKE '%" + txtSearch.getText() + "%'");
                                                                
         for (int i = model.getRowCount()-1; i >= 0; i--) {
             model.removeRow(i);                                

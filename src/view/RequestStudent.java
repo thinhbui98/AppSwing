@@ -27,7 +27,7 @@ public class RequestStudent extends javax.swing.JFrame {
     private int userId;
     public RequestStudent() {
         initComponents();
-        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username,books.bookname FROM requests "
+        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username,books.bookname,request_details.start_date,request_details.return_date FROM requests "
                 + "INNER JOIN users ON users.id = requests.user_id "
                 + "INNER JOIN request_details ON requests.id = request_details.request_id "
                 + "INNER JOIN books ON books.id = request_details.book_id "
@@ -48,7 +48,7 @@ public class RequestStudent extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog(null, "KHÔNG THỂ THÊM REQUEST MỚI");
         }
-        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username,books.bookname FROM requests "
+        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username,books.bookname,request_details.start_date,request_details.return_date FROM requests "
                 + "INNER JOIN users ON users.id = requests.user_id "
                 + "INNER JOIN request_details ON requests.id = request_details.request_id "
                 + "INNER JOIN books ON books.id = request_details.book_id "
@@ -59,7 +59,7 @@ public class RequestStudent extends javax.swing.JFrame {
     
     public RequestStudent(int type,int user_id,String abc) {
         initComponents();
-        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username,books.bookname FROM requests "
+        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username,books.bookname,request_details.start_date,request_details.return_date FROM requests "
                 + "INNER JOIN users ON users.id = requests.user_id "
                 + "INNER JOIN request_details ON requests.id = request_details.request_id "
                 + "INNER JOIN books ON books.id = request_details.book_id "
@@ -71,7 +71,10 @@ public class RequestStudent extends javax.swing.JFrame {
     public void showTable() {
         tblRequest.getColumnModel().getColumn(0).setPreferredWidth(5);
         tblRequest.getColumnModel().getColumn(1).setPreferredWidth(70);
-        tblRequest.getColumnModel().getColumn(2).setPreferredWidth(70);    
+        tblRequest.getColumnModel().getColumn(2).setPreferredWidth(70);   
+        tblRequest.getColumnModel().getColumn(3).setPreferredWidth(70);
+        tblRequest.getColumnModel().getColumn(4).setPreferredWidth(70);
+        tblRequest.getColumnModel().getColumn(5).setPreferredWidth(10);
         tblRequest.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         
         list.forEach((s) -> {
@@ -84,16 +87,13 @@ public class RequestStudent extends javax.swing.JFrame {
                     status = "Từ Chối";
                     break;
                 case 3:
-                    status = "Đang Xử Lý";
-                    break;
-                case 4:
-                    status = "Đang Chờ";
+                    status = "Đang Chờ Duyệt";
                     break;
                 default:
                     status = "Đã Trả Sách";
             }
             model.addRow(new Object[] {
-                s.getId(), s.getUsername(), s.getBookname(), status
+                s.getId(), s.getUsername(), s.getBookname(), s.getStart_date(), s.getReturn_date(), status
             });
         });
     }
@@ -135,11 +135,11 @@ public class RequestStudent extends javax.swing.JFrame {
 
             },
             new String [] {
-                "STT", "Tên người dùng", "Tên sách", "Trạng thái"
+                "STT", "Tên người dùng", "Tên sách", "Ngày mượn sách", "Ngày trả sách", "Trạng thái"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -212,7 +212,7 @@ public class RequestStudent extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(txtBookRequest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(131, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTextField1.setText("Tìm kiếm...");
@@ -225,13 +225,13 @@ public class RequestStudent extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(35, 35, 35)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 535, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 708, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(61, 61, 61)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 800, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(58, 58, 58)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(35, 35, 35))
         );
@@ -243,7 +243,7 @@ public class RequestStudent extends javax.swing.JFrame {
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                        .addGap(49, 49, 49)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))))
@@ -271,9 +271,6 @@ public class RequestStudent extends javax.swing.JFrame {
                     break;
                 case 3:
                     status = "Đang Xử Lý";
-                    break;
-                case 4:
-                    status = "Đang Chờ";
                     break;
                 default:
                     status = "Đã Trả Sách";

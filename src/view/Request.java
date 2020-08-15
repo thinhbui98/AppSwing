@@ -28,7 +28,7 @@ public class Request extends javax.swing.JFrame {
     private int typeUser;
     public Request() {
         initComponents();
-        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username,books.bookname FROM requests "
+        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username,books.bookname,request_details.start_date,request_details.return_date FROM requests "
                 + "INNER JOIN users ON users.id = requests.user_id "
                 + "INNER JOIN request_details ON requests.id = request_details.request_id "
                 + "INNER JOIN books ON books.id = request_details.book_id "
@@ -48,7 +48,7 @@ public class Request extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog(null, "KHÔNG THỂ THÊM REQUEST MỚI");
         }
-        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username,books.bookname FROM requests "
+        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username,books.bookname,request_details.start_date,request_details.return_date FROM requests "
                 + "INNER JOIN users ON users.id = requests.user_id "
                 + "INNER JOIN request_details ON requests.id = request_details.request_id "
                 + "INNER JOIN books ON books.id = request_details.book_id "
@@ -58,7 +58,7 @@ public class Request extends javax.swing.JFrame {
     }
     
     private void loadData() {
-        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username,books.bookname FROM requests "
+        list = new DAORequest().getListRequestSearched("SELECT requests.*,users.username,books.bookname,request_details.start_date,request_details.return_date FROM requests "
                 + "INNER JOIN users ON users.id = requests.user_id "
                 + "INNER JOIN request_details ON requests.id = request_details.request_id "
                 + "INNER JOIN books ON books.id = request_details.book_id "
@@ -76,7 +76,9 @@ public class Request extends javax.swing.JFrame {
         tblRequest.getColumnModel().getColumn(0).setPreferredWidth(5);
         tblRequest.getColumnModel().getColumn(1).setPreferredWidth(70);
         tblRequest.getColumnModel().getColumn(2).setPreferredWidth(70);
-        tblRequest.getColumnModel().getColumn(3).setPreferredWidth(10); 
+        tblRequest.getColumnModel().getColumn(3).setPreferredWidth(70);
+        tblRequest.getColumnModel().getColumn(4).setPreferredWidth(70);
+        tblRequest.getColumnModel().getColumn(5).setPreferredWidth(10); 
         tblRequest.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         
         list.forEach((s) -> {
@@ -89,16 +91,13 @@ public class Request extends javax.swing.JFrame {
                     status = "Từ Chối";
                     break;
                 case 3:
-                    status = "Đang Xử Lý";
-                    break;
-                case 4:
-                    status = "Đang Chờ";
+                    status = "Đang Chờ Duyệt";
                     break;
                 default:
                     status = "Đã Trả Sách";
             }
             model.addRow(new Object[] {
-                s.getId(), s.getUsername(), s.getBookname(), status
+                s.getId(), s.getUsername(), s.getBookname(), s.getStart_date(), s.getReturn_date(), status
             });
         });
     }
@@ -130,6 +129,32 @@ public class Request extends javax.swing.JFrame {
         }
     }
     
+    private void returnRequest() {
+        int r = tblRequest.getSelectedRow();                   
+        model.Request rq = new model.Request();
+        rq.setId(Integer.parseInt(txtId.getText()));
+        if(new DAORequest().acceptRequest(rq)) {                 
+            JOptionPane.showMessageDialog(null, "ĐÃ TRẢ SÁCH");    
+            loadData();
+        }                                                       
+        else {
+            JOptionPane.showMessageDialog(null, "KHÔNG THỂ TRẢ SÁCH");
+        }
+    }
+    
+    private void deleteRequest() {
+        int r = tblRequest.getSelectedRow();                 
+        model.Request rq = new model.Request();
+        rq.setId(Integer.parseInt(txtId.getText())); 
+        if(new DAORequest().deleteRequest(rq)) {                
+            JOptionPane.showMessageDialog(null, "ĐÃ XÓA YÊU CẦU");    
+            loadData();                        
+        }                                                       
+        else {
+            JOptionPane.showMessageDialog(null, "KHÔNG THỂ XÓA YÊU CẦU");
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -157,6 +182,8 @@ public class Request extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         txtId = new javax.swing.JTextField();
         txtBookRequest = new javax.swing.JTextField();
+        btnReturn = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
 
@@ -171,11 +198,11 @@ public class Request extends javax.swing.JFrame {
 
             },
             new String [] {
-                "STT", "Tên người dùng", "Tên sách", "Trạng thái"
+                "STT", "Tên người dùng", "Tên sách", "Ngày mượn sách", "Ngày trả sách", "Trạng thái"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -188,6 +215,10 @@ public class Request extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(tblRequest);
+        if (tblRequest.getColumnModel().getColumnCount() > 0) {
+            tblRequest.getColumnModel().getColumn(0).setMinWidth(5);
+            tblRequest.getColumnModel().getColumn(4).setResizable(false);
+        }
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -222,7 +253,7 @@ public class Request extends javax.swing.JFrame {
         );
         btnAcceptLayout.setVerticalGroup(
             btnAcceptLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
         );
 
         btnDecline.setBackground(new java.awt.Color(255, 0, 0));
@@ -256,6 +287,31 @@ public class Request extends javax.swing.JFrame {
 
         txtId.setEditable(false);
 
+        btnReturn.setBackground(new java.awt.Color(102, 102, 255));
+        btnReturn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnReturnMouseClicked(evt);
+            }
+        });
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setText("Trả Sách");
+
+        javax.swing.GroupLayout btnReturnLayout = new javax.swing.GroupLayout(btnReturn);
+        btnReturn.setLayout(btnReturnLayout);
+        btnReturnLayout.setHorizontalGroup(
+            btnReturnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btnReturnLayout.createSequentialGroup()
+                .addGap(40, 40, 40)
+                .addComponent(jLabel8)
+                .addGap(40, 40, 40))
+        );
+        btnReturnLayout.setVerticalGroup(
+            btnReturnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -266,22 +322,25 @@ public class Request extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
                     .addComponent(jLabel6)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(btnAccept, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnDecline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel2)
-                                .addComponent(jLabel3))
-                            .addGap(48, 48, 48)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))
+                        .addGap(48, 48, 48)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnDecline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(txtId)
                                 .addComponent(txtUsername)
                                 .addComponent(txtStatus)
                                 .addComponent(txtBookRequest, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addGap(30, 30, 30))
+                .addGap(54, 54, 54))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnAccept, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnReturn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -303,10 +362,11 @@ public class Request extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(txtBookRequest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(60, 60, 60)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(btnDecline, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnAccept, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(65, 65, 65)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnDecline, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAccept, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnReturn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(20, 20, 20))
         );
 
@@ -320,29 +380,29 @@ public class Request extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(35, 35, 35)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 535, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 667, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 708, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(61, 61, 61)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 869, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(45, 45, 45)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(35, 35, 35))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                        .addGap(44, 44, 44)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(35, 35, 35))
+                .addGap(34, 34, 34))
         );
 
         pack();
@@ -360,28 +420,41 @@ public class Request extends javax.swing.JFrame {
             switch(rq.getStatus()) {
                 case 1:
                     status = "Đồng Ý";
+                    btnAccept.setVisible(false);
+                    btnDecline.setVisible(false);
+                    btnReturn.setVisible(true);
                     break;
                 case 2:
                     status = "Từ Chối";
+                    btnAccept.setVisible(false);
+                    btnDecline.setVisible(false);
+                    btnReturn.setVisible(false);
                     break;
                 case 3:
                     status = "Đang Xử Lý";
-                    break;
-                case 4:
-                    status = "Đang Chờ";
+                    btnAccept.setVisible(true);
+                    btnDecline.setVisible(true);
+                    btnReturn.setVisible(false);
                     break;
                 default:
                     status = "Đã Trả Sách";
+                    btnAccept.setVisible(false);
+                    btnDecline.setVisible(false);
+                    btnReturn.setVisible(false);
+                    break;
             }
             txtStatus.setText(status);
             txtBookRequest.setText(rq.getBookname());
-            if (rq.getStatus() < 3 || rq.getStatus() > 4) {
-                btnAccept.setVisible(false);
-                btnDecline.setVisible(false);
-            } else {
-                btnAccept.setVisible(true);
-                btnDecline.setVisible(true);
-            }
+//            if (rq.getStatus() < 3 || rq.getStatus() > 4) {
+//                btnAccept.setVisible(false);
+//                btnDecline.setVisible(false);
+//                
+//            } else if(rq.getStatus() == 1) {
+//                btn
+//            } else {
+//                btnAccept.setVisible(true);
+//                btnDecline.setVisible(true);
+//            }
         }
     }//GEN-LAST:event_tblRequestMouseClicked
 
@@ -394,6 +467,11 @@ public class Request extends javax.swing.JFrame {
         // TODO add your handling code here:
         acceptRequest();
     }//GEN-LAST:event_btnAcceptMouseClicked
+
+    private void btnReturnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnReturnMouseClicked
+        // TODO add your handling code here:
+        returnRequest();
+    }//GEN-LAST:event_btnReturnMouseClicked
 
     /**
      * @param args the command line arguments
@@ -433,6 +511,7 @@ public class Request extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel btnAccept;
     private javax.swing.JPanel btnDecline;
+    private javax.swing.JPanel btnReturn;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -443,6 +522,7 @@ public class Request extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
